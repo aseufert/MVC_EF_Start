@@ -4,27 +4,36 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MVC_EF_Start.DataAccess;
+using System.Data.SQLite;
 
 namespace MVC_EF_Start
 {
   public class Startup
   {
-    public Startup(IConfiguration configuration)
+    public Startup(IConfiguration configuration, IHostingEnvironment env)
     {
-      Configuration = configuration;
+          Configuration = configuration;
+            _currentEnvironment = env;
     }
 
     public IConfiguration Configuration { get; }
+        private readonly IHostingEnvironment _currentEnvironment;
 
-    // This method gets called by the runtime. Use this method to add services to the container.
-    // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-    public void ConfigureServices(IServiceCollection services)
+        // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        public void ConfigureServices(IServiceCollection services)
     {
-      // Setup EF connection
-      services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration["Data:IEXTrading:ConnectionString"]));
+            if (_currentEnvironment.IsDevelopment()){
 
-      // added from MVC template
-      services.AddMvc();
+                services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(Configuration["Data:IEXTrading:ConnectionString"]));
+            } else if (_currentEnvironment.IsProduction())
+            {
+
+                services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration["Data:IEXTrading:ConnectionString"]));
+            }
+
+          // added from MVC template
+          services.AddMvc();
     }
 
     // this is the version from the MVC template
@@ -54,6 +63,9 @@ namespace MVC_EF_Start
         routes.MapRoute(
             name: "default",
             template: "{controller=Home}/{action=Index}/{id?}");
+        routes.MapRoute(
+        name: "db",
+        template: "{controller=DatabaseExample}/{action=DatabaseOperations}/{id?}");
       });
     }
   }

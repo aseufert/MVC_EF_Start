@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Customer;
+
+@{
     Layout = null;
 }
 
@@ -11,5 +13,12 @@
 </head>
 <body>
   <h2>Database operations successful</h2>
+    <h3>@Model.Name</h3>
+    @foreach (Order o in @Model.Orders)
+    {
+        <p>ID: @(o.Id)</p>
+        <p>Item: @(o.Item.ItemName)</p>
+        <p>Total: @("$" + o.TotalPaid)</p>
+    }
 </body>
 </html>
