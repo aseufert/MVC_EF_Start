@@ -64,17 +64,38 @@ namespace MVC_EF_Start.Controllers
             return View();
     }
 
-    public async Task<ViewResult> DatabaseOperations()
+    public IActionResult DatabaseOperations()
     {
+            // Query 1. Aggregations
+            int orderCount = dbContext.Orders.Count();
+            int customerCount = dbContext.Customers.Count();
 
-        // Features include which includes Orders associated with each Customer
-        Customer CustomerRead1 = dbContext.Customers
-                              .Include(c => c.Orders)
-                              .ThenInclude(o => o.Item)
-                              .Where(c => c.Name == "Bruce Wayne")
-                              .First();
+            ViewData["order_count"] = orderCount;
+            ViewData["customer_count"] = customerCount;
+
+            // Query 2: Read all customers
+            // Features include which includes Orders associated with each Customer
+            Customer[] CustomerRead1 = dbContext.Customers
+                                  .Include(c => c.Orders)
+                                  .ThenInclude(o => o.Item)
+                                  .Take(100)
+                                  .ToArray();
 
       return View(CustomerRead1);
     }
-  }
+
+
+    public IActionResult PointQueryAction(int id)
+    {
+
+        // Query 3: Customer point query based on id in url
+        Customer CustomerDetailRead = dbContext.Customers
+                                .Include(c => c.Orders)
+                                .ThenInclude(o => o.Item)
+                                .Where(c => c.Id == id)
+                                .First();
+
+        return View(CustomerDetailRead);
+    }
+}
 }

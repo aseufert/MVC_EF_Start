@@ -62,10 +62,16 @@ namespace MVC_EF_Start
       {
         routes.MapRoute(
             name: "default",
-            template: "{controller=Home}/{action=Index}/{id?}");
-        routes.MapRoute(
-        name: "db",
-        template: "{controller=DatabaseExample}/{action=DatabaseOperations}/{id?}");
+            template: "{controller=Home}/{action=Index}/{id?}"
+            );
+            routes.MapRoute(
+            name: "Detail Page",
+            template: "{controller=DatabaseExample}/{action=PointQueryAction}/{id}"
+            );
+            routes.MapRoute(
+            name: "db",
+            template: "{controller=DatabaseExample}/{action=DatabaseOperations}/"
+            );
       });
     }
   }
